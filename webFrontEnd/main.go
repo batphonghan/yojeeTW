@@ -7,15 +7,20 @@ import (
 )
 
 func main() {
-	tem := &templateHandler{fileName: "tweet.html"}
 	host := port()
 	fmt.Println("Serving at port ", host)
 
-	http.Handle("/", tem)
-	http.HandleFunc("/tweet", protectTweet(serveTweet))
-	http.HandleFunc("/retweets", protectTweets(serveTopTweets))
+	log.Fatal(http.ListenAndServe(host, handler()))
+}
 
-	log.Fatal(http.ListenAndServe(host, nil))
+func handler() http.Handler {
+	r := http.NewServeMux()
+	tem := templateHandler{fileName: "tweet.html"}
+	r.Handle("/", &tem)
+	r.HandleFunc("/tweet", protectTweet(serveTweet))
+	r.HandleFunc("/retweets", protectTweets(serveTopTweets))
+
+	return r
 }
 
 func port() string {

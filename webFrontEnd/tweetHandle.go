@@ -82,7 +82,15 @@ func serveTweet(rw http.ResponseWriter, rq *http.Request) {
 		go updateTopTweets(tweet)
 
 		log.Printf("Success tweet %s", tweet.ID)
+
+		rw.Header().Set("Content-Type", "application/json")
 		rw.WriteHeader(http.StatusCreated)
+		b, err := json.Marshal(tweet)
+		if err != nil {
+			log.Println(err)
+		}
+		rw.Write(b)
+
 		return
 	}
 
