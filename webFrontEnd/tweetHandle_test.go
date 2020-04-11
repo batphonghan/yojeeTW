@@ -10,6 +10,35 @@ import (
 	"testing"
 )
 
+func TestRoutingTypo(t *testing.T) {
+	srv := httptest.NewServer(handler())
+	defer srv.Close()
+
+	tb := []struct {
+		name   string
+		url    string
+		status int
+	}{
+		{name: "Typos tweeet", url: "tweeet", status: http.StatusNotFound},
+		{name: "Typos retweeet", url: "retweet", status: http.StatusNotFound},
+		{name: "reweeet", url: "retweets", status: http.StatusOK},
+	}
+	for _, tc := range tb {
+		t.Run(tc.name, func(t *testing.T) {
+			res, err := http.Get(fmt.Sprintf("%s/%s", srv.URL, tc.url))
+
+			if err != nil {
+				t.Fatalf("could not send GET request: %v", err)
+			}
+			defer res.Body.Close()
+
+			if res.StatusCode != tc.status {
+				t.Fatalf("expected status StatusNotFound; got %v", res.Status)
+			}
+		})
+	}
+}
+
 func TestRoutingGet(t *testing.T) {
 	srv := httptest.NewServer(handler())
 	defer srv.Close()
@@ -53,5 +82,4 @@ func TestRoutingPOST(t *testing.T) {
 	if err := json.Unmarshal(b, &tweet); err != nil {
 		t.Fatalf("could not read response: %v", err)
 	}
-
 }
