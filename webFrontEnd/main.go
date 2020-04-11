@@ -13,7 +13,7 @@ func main() {
 
 	http.Handle("/", tem)
 	http.HandleFunc("/tweet", protectTweet(serveTweet))
-	http.HandleFunc("/tweets", protectTweets(serveTweets))
+	http.HandleFunc("/retweets", protectTweets(serveTweets))
 
 	log.Fatal(http.ListenAndServe(host, nil))
 }
