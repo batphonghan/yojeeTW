@@ -82,4 +82,49 @@ func TestRoutingPOST(t *testing.T) {
 	if err := json.Unmarshal(b, &tweet); err != nil {
 		t.Fatalf("could not read response: %v", err)
 	}
+
+}
+
+func TestReTweet(t *testing.T) {
+
+	srv := doPostTweet()
+	defer srv.Close()
+	/// Retweets
+	res, err := http.Get(fmt.Sprintf("%s/retweets", srv.URL))
+
+	if err != nil {
+		t.Fatalf("could not send GET retweets: %v", err)
+	}
+	defer res.Body.Close()
+
+	if res.StatusCode != http.StatusOK {
+		t.Errorf("expected status StatusOK; got %v", res.Status)
+	}
+
+	b, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		t.Fatalf("could not read response: %v", err)
+	}
+
+	var tweets []Tweet
+	if err := json.Unmarshal(b, &tweets); err != nil {
+		t.Fatalf("could not read response: %v", err)
+	}
+	if len(tweets) != 10 {
+		t.Errorf("expected tweets len 10 %v", len(tweets))
+	}
+}
+
+func doPostTweet() *httptest.Server {
+	srv := httptest.NewServer(handler())
+
+	var jsonStr = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque interdum rutrum sodales. Nullam mattis fermentum libero, non volutpat."
+
+	url := fmt.Sprintf("%s/tweet?tweet_data=%s", srv.URL, url.QueryEscape(jsonStr))
+
+	for i := 0; i < 1000; i++ {
+		_, _ = http.Post(url, "application/json", nil)
+	}
+
+	return srv
 }
