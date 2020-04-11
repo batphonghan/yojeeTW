@@ -5,10 +5,13 @@ import (
 	"sync"
 )
 
+var tweetsMT sync.RWMutex
 var tweets = make(map[string]Tweet)
 var topTweets = make(map[string]Tweet)
 
 func reTweet(tweetID string) error {
+	tweetsMT.Lock()
+	defer tweetsMT.Unlock()
 	tweet, ok := tweets[tweetID]
 
 	if !ok {
@@ -23,11 +26,11 @@ func reTweet(tweetID string) error {
 	return nil
 }
 
-var mtUpdate sync.RWMutex
+var topTweetMT sync.RWMutex
 
 func updateTopTweets(t Tweet) {
-	mtUpdate.Lock()
-	defer mtUpdate.Unlock()
+	topTweetMT.Lock()
+	defer topTweetMT.Unlock()
 
 	_, ok := topTweets[t.ID]
 	if ok {
@@ -50,4 +53,11 @@ func updateTopTweets(t Tweet) {
 	if lessRetweet.ReTweet < t.ReTweet {
 		topTweets[lessRetweet.ID] = t
 	}
+}
+
+func adTweet(t Tweet) {
+	tweetsMT.Lock()
+	defer tweetsMT.Unlock()
+
+	tweets[t.ID] = t
 }

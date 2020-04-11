@@ -32,6 +32,8 @@ func protectTweets(f http.HandlerFunc) http.HandlerFunc {
 }
 
 func makeTopTweetsResponse() ([]byte, error) {
+	topTweetMT.RLock()
+	defer topTweetMT.RUnlock()
 	reTweets := make([]Tweet, 0, len(topTweets))
 
 	for _, v := range topTweets {
@@ -43,7 +45,7 @@ func makeTopTweetsResponse() ([]byte, error) {
 	return json.Marshal(reTweets)
 }
 
-func serveTweets(rw http.ResponseWriter, rq *http.Request) {
+func serveTopTweets(rw http.ResponseWriter, rq *http.Request) {
 	rs, err := makeTopTweetsResponse()
 	if err != nil {
 		rw.WriteHeader(http.StatusInternalServerError)

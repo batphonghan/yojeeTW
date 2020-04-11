@@ -15,7 +15,7 @@ type Tweet struct {
 type ByReTweet []Tweet
 
 func (t ByReTweet) Len() int           { return len(t) }
-func (t ByReTweet) Less(i, j int) bool { return t[i].ReTweet < t[j].ReTweet }
+func (t ByReTweet) Less(i, j int) bool { return t[i].ReTweet > t[j].ReTweet }
 func (t ByReTweet) Swap(i, j int)      { t[i], t[j] = t[j], t[i] }
 
 func makeTweet(tweetData string) (Tweet, error) {
@@ -31,7 +31,7 @@ func makeTweet(tweetData string) (Tweet, error) {
 		Data: tweetData,
 	}
 
-	tweets[tweetID] = tweet
+	go adTweet(tweet)
 
 	return tweet, nil
 }
