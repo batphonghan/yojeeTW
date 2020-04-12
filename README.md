@@ -36,19 +36,30 @@
 
     Which that design we can scale webFrontEnd or server dependenly.
 
+#### Prerequisities
+
+    docker demon started
+
 #### How to run:
 For the quick setting up I commit the prebuild binary to the repo. Just run the follow command to start.
 
 `./run.sh`
 
-For create tweet:
+For create tweet: replace `tweet_data` with any text (even more than 140 char)
 
-`curl --location --request POST 'http://127.0.0.1:8080/tweet?tweet_data=Lorem%20ipsum%20dolor%20sit%20amet,%20consectetur%20adipiscing%20elit.%20Pellentesque%20interdum%20rutrum%20sodales.%20Nullam%20mattis%20fermentum%20libero,%20non%20volutpat.%20'`
+```
+curl --location --request POST 'http://127.0.0.1:8080/tweet?tweet_data=Lorem%20ipsum%20dolor%20sit%20amet,%20consectetur%20adipiscing%20elit.%20Pellentesque%20interdum%20rutrum%20sodales.%20Nullam%20mattis%20fermentum%20libero,%20non%20volutpat.%20'
+
+```
 
 Get retweet:
 
-`curl --location --request GET 'http://127.0.0.1:8080/retweets'`
+```
+curl --location --request GET 'http://127.0.0.1:8080/retweets'
+```
 
-Retweet (noted to replaced tweet_id with corrected return form create tweet or from retweet API):
+Retweet (noted to replaced tweet_id with corrected id return form create tweet or from retweet API):
 
-`curl --location --request POST 'http://127.0.0.1:8080/tweet?tweet_data=Lorem%20ipsum%20dolor%20sit%20amet,%20consectetur%20adipiscing%20elit.%20Pellentesque%20interdum%20rutrum%20sodales.%20Nullam%20mattis%20fermentum%20libero,%20non%20volutpat.%20&tweet_id=4ec13dc5-3645-40c9-8a93-b6ce2c045c9a'`
+```
+curl --location --request POST 'http://127.0.0.1:8080/tweet?tweet_id=bff3ce31-1b9f-4208-8983-baf72d8e2c2c'
+```
