@@ -39,8 +39,10 @@
     Which that design we can scale webFrontEnd or server dependenly.
 
 #### Prerequisities
-
-    docker demon started
+    I decided seprate server and webFrontEnd to easier to scale them. That's bring a issue on 
+    how they can discover each other. I bringing consul to solve this issue, however it make
+    running from source took some extra step. 
+    So the fastest way is to use docker-compose to run at once.
 
 #### How to run:
 For the quick setting up I commit the prebuild binary to the repo. Just run the follow command to start.
