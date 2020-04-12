@@ -1,7 +1,9 @@
 #### Designing yojeeTW
 
-1. What is yojeeTW?
-    Implement a very basic version of Twitter. 
+1. What is yojeeTW? 
+
+    Implement a very basic version of Twitter.
+
 2. Requirements and Goals of the System
     - User can create a tweet on this page (anonymous)
     - Any tweet can be retweeted
