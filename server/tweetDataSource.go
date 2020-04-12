@@ -1,13 +1,29 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"sort"
 	"sync"
 )
 
 var tweetsMT sync.RWMutex
 var tweets = make(map[string]Tweet)
 var topTweets = make(map[string]Tweet)
+
+func makeTopTweetsResponse() ([]byte, error) {
+	topTweetMT.RLock()
+	defer topTweetMT.RUnlock()
+	reTweets := make([]Tweet, 0, len(topTweets))
+
+	for _, v := range topTweets {
+		reTweets = append(reTweets, v)
+	}
+
+	sort.Sort(ByReTweet(reTweets))
+
+	return json.Marshal(reTweets)
+}
 
 func reTweet(tweetID string) error {
 	tweetsMT.Lock()

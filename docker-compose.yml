@@ -1,0 +1,41 @@
+version: "2"
+services: 
+  consul:
+    image: consul:1.7.2
+    ports:
+      - "8300:8300"
+      - "8400:8400"
+      - "8500:8500"
+    networks:
+      - sky-net
+
+  server:
+    build: 
+      context: server
+    image: yolee-grpc-server:1.0
+    depends_on: 
+      - consul
+    environment: 
+      - CONSUL_HTTP_ADDR=consul:8500
+    ports: 
+      - 50051:50051
+    networks:
+      - sky-net
+
+  client:
+    build: 
+      context: webFrontEnd
+    image: yolee-client:1.0
+    environment: 
+      - CONSUL_HTTP_ADDR=consul:8500
+    depends_on: 
+      - consul
+      - server
+    networks:
+      - sky-net
+    ports: 
+      - 8080:8080
+
+networks: 
+  sky-net:
+    driver: bridge

@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package pb;
+message Tweet {
+    string tweetData = 1;
+    string tweetID = 2; 
+    int64 retweets = 3;
+}
+
+message TweetRequest {
+    string tweetData = 1;
+    string tweetID = 2;
+}
+
+message TweetResponse {
+    Tweet tweet = 1;
+}
+
+message TopRetweetsResponse {
+    bytes data = 1;
+}
+
+message TopRetweetsRequest {
+    
+}
+
+service TweetService {
+    rpc Tweet(TweetRequest) returns (TweetResponse) {};
+    rpc TopRetweets(TopRetweetsRequest) returns (TopRetweetsResponse) {};
+}
+

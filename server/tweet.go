@@ -8,7 +8,7 @@ const TOPTWEETS = 10
 type Tweet struct {
 	ID      string `json:"id,omitempty"`
 	Data    string `json:"data,omitempty"`
-	ReTweet int    `json:"re_tweet"`
+	ReTweet int64  `json:"re_tweet"`
 }
 
 // ByReTweet implements sort.Interface based on the ReTweet field.

@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
-	"sort"
+	"yojeeTW/pb"
 )
 
 func protectTweet(f http.HandlerFunc) http.HandlerFunc {
@@ -31,58 +31,35 @@ func protectTweets(f http.HandlerFunc) http.HandlerFunc {
 	}
 }
 
-func makeTopTweetsResponse() ([]byte, error) {
-	topTweetMT.RLock()
-	defer topTweetMT.RUnlock()
-	reTweets := make([]Tweet, 0, len(topTweets))
-
-	for _, v := range topTweets {
-		reTweets = append(reTweets, v)
-	}
-
-	sort.Sort(ByReTweet(reTweets))
-
-	return json.Marshal(reTweets)
-}
-
 func serveTopTweets(rw http.ResponseWriter, rq *http.Request) {
-	rs, err := makeTopTweetsResponse()
+	log.Printf("ServeTopTweets Tweet with url: %v \n", discoveryURL)
+	res, err := client.TopRetweets(rq.Context(), &pb.TopRetweetsRequest{})
 	if err != nil {
 		rw.WriteHeader(http.StatusInternalServerError)
 		return
 	}
+	b := res.Data
 
 	rw.Header().Set("Content-Type", "application/json")
 	rw.WriteHeader(http.StatusOK)
-	rw.Write(rs)
+	rw.Write(b)
 }
 
 func serveTweet(rw http.ResponseWriter, rq *http.Request) {
-	if tweetID := rq.FormValue("tweet_id"); len(tweetID) > 0 {
-		if err := reTweet(tweetID); err != nil {
-			log.Printf("StatusNotFound ID: %s \n", tweetID)
-			rw.WriteHeader(http.StatusNotFound)
-			return
-		}
-
-		log.Printf("Success retweetID: %s \n", tweetID)
-		rw.WriteHeader(http.StatusOK)
+	log.Printf("Serving Tweet with url: %v \n", discoveryURL)
+	tweetID := rq.FormValue("tweet_id")
+	tweetData := rq.FormValue("tweet_data")
+	request := pb.TweetRequest{
+		TweetID:   tweetID,
+		TweetData: tweetData,
+	}
+	resp, err := client.Tweet(rq.Context(), &request)
+	if err != nil {
+		rw.WriteHeader(http.StatusInternalServerError)
+		log.Printf("Error tweet with err: %v \n", err)
 		return
 	}
-
-	if tweetData := rq.FormValue("tweet_data"); len(tweetData) > 0 {
-		tweet, err := makeTweet(tweetData)
-		if err != nil {
-			rw.WriteHeader(http.StatusInternalServerError)
-
-			log.Printf("Error tweet with err: %v \n", err)
-			return
-		}
-
-		go updateTopTweets(tweet)
-
-		log.Printf("Success tweet %s", tweet.ID)
-
+	if tweet := resp.Tweet; tweet != nil {
 		rw.Header().Set("Content-Type", "application/json")
 		rw.WriteHeader(http.StatusCreated)
 		b, err := json.Marshal(tweet)
@@ -90,7 +67,6 @@ func serveTweet(rw http.ResponseWriter, rq *http.Request) {
 			log.Println(err)
 		}
 		rw.Write(b)
-
 		return
 	}
 

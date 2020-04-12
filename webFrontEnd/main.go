@@ -9,7 +9,7 @@ import (
 func main() {
 	host := port()
 	fmt.Println("Serving at port ", host)
-
+	initClient()
 	log.Fatal(http.ListenAndServe(host, handler()))
 }
 
@@ -24,5 +24,5 @@ func handler() http.Handler {
 }
 
 func port() string {
-	return "localhost:8080"
+	return ":8080"
 }
