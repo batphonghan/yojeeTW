@@ -6,10 +6,14 @@ import (
 	"net/http"
 )
 
+func init() {
+	initClient()
+}
+
 func main() {
 	host := port()
 	fmt.Println("Serving at port ", host)
-	initClient()
+
 	log.Fatal(http.ListenAndServe(host, handler()))
 }
 

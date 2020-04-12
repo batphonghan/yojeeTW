@@ -76,4 +76,5 @@ func adTweet(t Tweet) {
 	defer tweetsMT.Unlock()
 
 	tweets[t.ID] = t
+	go updateTopTweets(t)
 }
